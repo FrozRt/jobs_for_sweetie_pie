@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from loguru import logger
 
-from data.config import admins
+from settings.config import admins
 from .middlewares import ThrottlingMiddleware, AccessMiddleware
 
 

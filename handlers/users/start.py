@@ -4,7 +4,7 @@ from aiogram.types.message import ContentType
 from aiogram.utils.markdown import text, bold, italic
 from aiogram.dispatcher.filters.builtin import CommandStart
 
-from loader import dp
+from core.loader import dp
 
 
 @dp.message_handler(CommandStart())

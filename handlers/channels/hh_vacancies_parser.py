@@ -1,18 +1,22 @@
-from time import time
+import re
+from dateutil.parser import parse
+from datetime import datetime, timedelta
 
-from loader import bot
-from data.config import CHANNEL
+
+from core.loader import bot
+from settings.config import settings
 import asyncio
 from aiohttp import ClientSession
 
-# def write_data(data):
+
+# def write_data(settings):
 #     global count
 #     with open('data_from_hh.csv', 'a') as file:
 #         order = ['date', 'title', 'cost', 'company', 'url', 'responsibility', 'requirement']
 #         writer = csv.DictWriter(
 #             file, fieldnames=order, delimiter=';',
 #             quoting=csv.QUOTE_NONNUMERIC)
-#         writer.writerow(data)
+#         writer.writerow(settings)
 #     count += 1
 
 
@@ -24,7 +28,7 @@ async def get_vacancy():
             task = asyncio.create_task(get_response(url, session, page))
             tasks.append(task)
         await asyncio.gather(*tasks)
-    await session.connector.close()
+    # await session.connector.close()
 
 
 async def get_response(url, session, page=None):
@@ -38,12 +42,22 @@ async def get_response(url, session, page=None):
 
 
 async def get_page(data):
-    ids = []
+    jobs = []
     for item in data['items']:
+        if parse(item['published_at'], ignoretz=True) < (datetime.now() - timedelta(days=1)):
+            continue
 
-        ids.append(item['id'])
+        name = item['name']
+        if item['snippet']['requirement'] and item['snippet']['responsibility']:
+            dirty_description = item['snippet']['requirement'] + '\n' + item['snippet']['responsibility']
+        else:
+            dirty_description = ''
+        description = re.sub('<[^<]+?>', '', dirty_description)
+        url = item['alternate_url']
+        job_item = f'{name}\n{description}\n{url}'
+        jobs.append(job_item)
 
-        await bot.send_message(chat_id=CHANNEL, text=ids, parse_mode="HTML")
+    await bot.send_message(chat_id=settings.CHANNEL, text=jobs, parse_mode="HTML")
 
 
 if __name__ == '__main__':
@@ -52,10 +66,8 @@ if __name__ == '__main__':
                                         Safari/537.36', 'accept': '*/*'
                }
     params = {
-        'text': 'Python',
+        'name': '3d artist',
         'area': 2,  # Поиск ощуществляется по вакансиям города Санкт-Петербург
-        'per_page': 100  # Кол-во вакансий на 1 странице
+        'per_page': 10  # Кол-во вакансий на 1 странице
     }
-    start_time = time()
     asyncio.run(get_vacancy())
-    print(f"Passed {round(time() - start_time, 2)} sec")

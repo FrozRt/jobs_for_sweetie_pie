@@ -2,11 +2,11 @@ import logging
 
 from aiogram import Dispatcher
 
-from data.config import admins
+from settings.config import settings
 
 
 async def on_startup_notify(dp: Dispatcher):
-    for admin in admins:
+    for admin in settings.admins:
         try:
             await dp.bot.send_message(admin, "Бот Запущен")
 

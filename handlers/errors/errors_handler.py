@@ -1,6 +1,6 @@
 import logging
 
-from loader import dp
+from core.loader import dp
 
 
 @dp.errors_handler()

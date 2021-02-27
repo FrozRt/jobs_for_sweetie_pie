@@ -4,4 +4,6 @@
 out
 gen
 
-data/.env
+settings/.env
+hh_chunks
+settings/__pycache__/

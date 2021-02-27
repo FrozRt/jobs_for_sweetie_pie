@@ -15,6 +15,7 @@ python-dotenv = "^0.15.0"
 loguru = "^0.5.3"
 bs4 = "^0.0.1"
 lxml = "^4.6.2"
+celery = "^5.0.5"
 
 [tool.poetry.dev-dependencies]
 

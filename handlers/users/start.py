@@ -12,17 +12,6 @@ async def bot_start(message: types.Message):
     await message.answer(f'Привет, {message.from_user.full_name}!')
 
 
-# Хэндлер на команду /start
-@dp.message_handler(commands=["go"])
-async def cmd_start(message: types.Message):
-    poll_keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    poll_keyboard.add(types.KeyboardButton(text="Создать викторину",
-                                           request_poll=types.KeyboardButtonPollType(
-                                               type=types.PollType.QUIZ)))
-    poll_keyboard.add(types.KeyboardButton(text="Отмена"))
-    await message.answer("Нажмите на кнопку ниже и создайте викторину!", reply_markup=poll_keyboard)
-
-
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
     msg = text(bold('Я могу ответить на следующие команды:'),

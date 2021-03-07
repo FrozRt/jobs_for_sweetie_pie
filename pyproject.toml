@@ -16,6 +16,8 @@ loguru = "^0.5.3"
 bs4 = "^0.0.1"
 lxml = "^4.6.2"
 celery = "^5.0.5"
+aiomysql = "^0.0.21"
+pydantic = "^1.8.1"
 
 [tool.poetry.dev-dependencies]
 

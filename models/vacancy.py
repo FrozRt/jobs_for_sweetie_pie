@@ -10,5 +10,4 @@ class Vacancy(BaseModel):
     salary: float
     company: str
     uri: str
-
     created_at: datetime

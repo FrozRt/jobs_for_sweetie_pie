@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  bot:
+    container_name: spp_base
+    image: docker.marmon.info/master/jobs_for_sweetie_pie:latest
+    restart: always
+    ports:
+      - 6080:8000
+
+  rabbitmq:
+    container_name: spp_rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - 5672:5672
+    restart: always
+
+  celery_worker:
+    command: celery -A simple_customer_api worker -l info
+    container_name: sc-celery-worker
+    env_file:
+      - .prod.full.env
+    depends_on:
+      - bot
+      - db
+      - rabbitmq
+    image: docker.liis.su/sc/master/simple-customer-api:latest
+    restart: always

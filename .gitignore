@@ -5,5 +5,5 @@ out
 gen
 
 settings/.env
-hh_chunks
 settings/__pycache__/
+/hh_chunks.py

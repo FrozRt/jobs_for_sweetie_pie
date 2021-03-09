@@ -19,7 +19,6 @@ async def process_help_command(message: types.Message):
     await message.reply(msg, parse_mode=ParseMode.MARKDOWN)
 
 
-# Хэндлер на текстовое сообщение с текстом “Отмена”
 @dp.message_handler(lambda message: message.text == "Отмена")
 async def action_cancel(message: types.Message):
     remove_keyboard = types.ReplyKeyboardRemove()

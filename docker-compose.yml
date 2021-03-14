@@ -16,13 +16,22 @@ services:
     restart: always
 
   celery_worker:
-    command: celery -A simple_customer_api worker -l info
-    container_name: sc-celery-worker
+    command: celery -A jobs_for_sweetie_pie worker -l info
+    container_name: spp_celery-worker
     env_file:
       - .prod.full.env
     depends_on:
       - bot
       - db
       - rabbitmq
-    image: docker.liis.su/sc/master/simple-customer-api:latest
+    image: docker.marmon.info/master/jobs_for_sweetie_pie:latest
     restart: always
+
+  celery-beat:
+    container_name: spp-celery-beat
+    image: docker.marmon.info/master/jobs_for_sweetie_pie:latest
+    command: celery -A jobs_for_sweetie_pie beat -l info
+    env_file:
+      - .prod.full.env
+    depends_on:
+      - rabbitmq

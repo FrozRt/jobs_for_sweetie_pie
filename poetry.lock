@@ -1,6 +1,6 @@
 [[package]]
 name = "aiogram"
-version = "2.11.2"
+version = "2.14.3"
 description = "Is a pretty simple and fully asynchronous framework for Telegram Bot API"
 category = "main"
 optional = false
@@ -501,12 +501,12 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.5"
-content-hash = "a30c6f18ecffbba4f80b62c43f19d14c8b507ca255bd6d38572e35b12a03b3d4"
+content-hash = "c0b620e28245b5264467b91ccd4a52a3f3317d14a67895df6be4ff72b14ec7d0"
 
 [metadata.files]
 aiogram = [
-    {file = "aiogram-2.11.2-py3-none-any.whl", hash = "sha256:ba09c4ed165d7ad2ee75f1e2c2886976c38400632b5c9127d88b3d778a354f8e"},
-    {file = "aiogram-2.11.2.tar.gz", hash = "sha256:851cdb583b9fb546d13bb4f8cd0ae0c01aaca398dcc1687d1223618490a91228"},
+    {file = "aiogram-2.14.3-py3-none-any.whl", hash = "sha256:2f3259fcf7598a166aace022768a77be8ab732971f54e08a3b828a896cfe2bad"},
+    {file = "aiogram-2.14.3.tar.gz", hash = "sha256:8ce2886c6c74a35f7a75fb6422af53914aa9c1b7d7032de8d58a3f411349700d"},
 ]
 aiohttp = [
     {file = "aiohttp-3.7.3-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:328b552513d4f95b0a2eea4c8573e112866107227661834652a8984766aa7656"},

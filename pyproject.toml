@@ -6,7 +6,7 @@ authors = ["Mikhail Chigrin <chmv@liis.su>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.8.5"
+python = "^3.8.5"
 SQLAlchemy = "^1.3.23"
 aiogram = "^2.11.2"
 psycopg2-binary = "^2.8.6"

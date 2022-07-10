@@ -1,37 +1,72 @@
-version: "3"
+version: "3.8"
+
+x-settings: &global
+  environment:
+    - CHANNEL=${CHANNEL}
+    - TELEGRAM_API_TOKEN=${TELEGRAM_API_TOKEN}
+    - ADMIN1=${ADMIN1}
+    - ADMIN2=${ADMIN2}
+    - CELERY_BROKER=${CELERY_BROKER}
+    - CELERY_HOUR_BEAT_INTERVAL=${CELERY_HOUR_BEAT_INTERVAL}
+    - CELERY_MINUTE_BEAT_INTERVAL=${CELERY_MINUTE_BEAT_INTERVAL}
+    - MY_DB=${MY_DB}
+    - MY_HOST=${MY_HOST}
+    - MY_PORT=${MY_PORT}
+    - MY_USER=${MY_USER}
+    - MY_PASSWORD=${MY_PASSWORD}
+    - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 services:
-  bot:
-    container_name: spp_base
-    image: docker.marmon.info/master/jobs_for_sweetie_pie:latest
-    restart: always
+#  bot:
+#    build:
+#      context: .
+#      dockerfile: bot.Dockerfile
+#    container_name: spp_base
+#    restart: always
+#    <<: *global
+#    ports:
+#      - 6080:8000
+#    depends_on:
+#      - db
+
+  db:
+    container_name: spp_mysql
+    image: mysql:5.7
     ports:
-      - 6080:8000
+      - 3306:3306
+    <<: *global
+    volumes:
+      - /tmp/aiomysql:/var/run/mysqld/
 
   rabbitmq:
     container_name: spp_rabbitmq
     image: rabbitmq:latest
     ports:
       - 5672:5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-user}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-user}
     restart: always
 
-  celery_worker:
-    command: celery -A jobs_for_sweetie_pie worker -l info
-    container_name: spp_celery-worker
-    env_file:
-      - .prod.full.env
-    depends_on:
-      - bot
-      - db
-      - rabbitmq
-    image: docker.marmon.info/master/jobs_for_sweetie_pie:latest
-    restart: always
-
-  celery-beat:
-    container_name: spp-celery-beat
-    image: docker.marmon.info/master/jobs_for_sweetie_pie:latest
-    command: celery -A jobs_for_sweetie_pie beat -l info
-    env_file:
-      - .prod.full.env
-    depends_on:
-      - rabbitmq
+#  celery_worker:
+#    build:
+#      context: .
+#      dockerfile: bot.Dockerfile
+#    command: celery -A jobs_for_sweetie_pie worker -l info
+#    container_name: spp_celery-worker
+#    <<: *global
+#    depends_on:
+#      - bot
+#      - db
+#      - rabbitmq
+#    restart: always
+#
+#  celery-beat:
+#    build:
+#      context: .
+#      dockerfile: bot.Dockerfile
+#    container_name: spp-celery-beat
+#    <<: *global
+#    command: celery -A jobs_for_sweetie_pie beat -l info
+#    depends_on:
+#      - rabbitmq

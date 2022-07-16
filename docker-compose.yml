@@ -9,14 +9,21 @@ x-settings: &global
     - CELERY_BROKER=${CELERY_BROKER}
     - CELERY_HOUR_BEAT_INTERVAL=${CELERY_HOUR_BEAT_INTERVAL}
     - CELERY_MINUTE_BEAT_INTERVAL=${CELERY_MINUTE_BEAT_INTERVAL}
-    - MY_DB=${MY_DB}
-    - MY_HOST=${MY_HOST}
-    - MY_PORT=${MY_PORT}
-    - MY_USER=${MY_USER}
-    - MY_PASSWORD=${MY_PASSWORD}
+    - MYSQL_DATABASE=${MY_DB}
+    - MYSQL_USER=${MY_USER}
+    - MYSQL_PASSWORD=${MY_PASSWORD}
     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 services:
+  db:
+    container_name: mysql
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    <<: *global
+    volumes:
+      - my-db:/var/lib/mysql
+
 #  bot:
 #    build:
 #      context: .
@@ -26,27 +33,17 @@ services:
 #    <<: *global
 #    ports:
 #      - 6080:8000
-#    depends_on:
-#      - db
 
-  db:
-    container_name: spp_mysql
-    image: mysql:5.7
-    ports:
-      - 3306:3306
-    <<: *global
-    volumes:
-      - /tmp/aiomysql:/var/run/mysqld/
 
-  rabbitmq:
-    container_name: spp_rabbitmq
-    image: rabbitmq:latest
-    ports:
-      - 5672:5672
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-user}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-user}
-    restart: always
+#  rabbitmq:
+#    container_name: spp_rabbitmq
+#    image: rabbitmq:latest
+#    ports:
+#      - 5672:5672
+#    environment:
+#      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-user}
+#      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-user}
+#    restart: always
 
 #  celery_worker:
 #    build:
@@ -70,3 +67,6 @@ services:
 #    command: celery -A jobs_for_sweetie_pie beat -l info
 #    depends_on:
 #      - rabbitmq
+
+volumes:
+  my-db:

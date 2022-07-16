@@ -1,16 +1,14 @@
-FROM python:3.9-slim-buster
+FROM python:3.8-slim-buster
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1
+
+RUN mkdir -p /app && pip install poetry && poetry config virtualenvs.create false
 
 WORKDIR /app
-COPY poetry.lock pyproject.toml /app/
-
-RUN apt-get update && apt install -y netcat && pip install --upgrade pip poetry \
-    && poetry config virtualenvs.create false \
-    && poetry install --no-dev \
-    && rm -rf /root/.cache/pip
- \
 
 COPY . /app
-WORKDIR /app
+
+RUN poetry install --no-dev --no-root
 
 CMD ["python", "main.py"]
-

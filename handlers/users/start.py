@@ -1,14 +1,10 @@
-import asyncio
-
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.types import ParseMode
 from aiogram.types.message import ContentType
-from aiogram.utils.exceptions import RetryAfter
 from aiogram.utils.markdown import bold, italic, text
 
 from core.loader import dp
-from handlers.channels.hh_vacancies_parser import parser
 
 
 @dp.message_handler(CommandStart())
@@ -31,27 +27,28 @@ async def action_cancel(message: types.Message):
     )
 
 
-@dp.message_handler(lambda message: message.text == "Parse")
-async def whatsup_message(message: types.Message):
-    await message.answer("Секунду")
-    data = await parser.get_data()
-    for vacancy in data:
-        try:
-            await message.answer(
-                f"{vacancy['link_title']}\n"
-                f"<b>{vacancy['salary']}</b>\r\n"
-                f"\r\n"
-                f"Организация: {vacancy['company_link_title']}\n"
-                f"{vacancy['company_location']}\r\n"
-                f"\r\n"
-                f"{vacancy['work_responsibilities']}\n"
-                f"\r\n"
-                f"{vacancy['work_requirements']}",
-                parse_mode="HTML",
-            )
-            await asyncio.sleep(0.1)
-        except RetryAfter as e:
-            await asyncio.sleep(e.timeout + 0.1)
+# @dp.message_handler(lambda message: message.text == "Parse")
+# async def whatsup_message(message: types.Message):
+#     await message.answer("Секунду")
+#     data = await parser.get_data()
+#     for vacancy in data:
+#         try:
+#             await message.answer(
+#                 f"{vacancy['link_title']}\n"
+#                 f"<b>{vacancy['salary']}</b>\r\n"
+#                 f"\r\n"
+#                 f"Организация: {vacancy['company_link_title']}\n"
+#                 f"{vacancy['company_location']}\r\n"
+#                 f"\r\n"
+#                 f"{vacancy['work_responsibilities']}\n"
+#                 f"\r\n"
+#                 f"{vacancy['work_requirements']}",
+#                 parse_mode="HTML",
+#             )
+#             await asyncio.sleep(0.1)
+#         except RetryAfter as e:
+#             await asyncio.sleep(e.timeout + 0.1)
+#
 
 
 @dp.message_handler(content_types=ContentType.ANY)

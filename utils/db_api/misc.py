@@ -4,7 +4,7 @@ from typing import List, Optional, Type, TypeVar, Union
 T = TypeVar("T")
 
 
-def flatten(d: dict, parent_key: str = '', sep: str = ':') -> dict:
+def flatten(d: dict, parent_key: str = "", sep: str = ":") -> dict:
     items = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
@@ -15,7 +15,7 @@ def flatten(d: dict, parent_key: str = '', sep: str = ':') -> dict:
     return dict(items)
 
 
-def unflatten(d: dict, sep: str = ':') -> dict:
+def unflatten(d: dict, sep: str = ":") -> dict:
     res = dict()
     for key, value in d.items():
         parts = key.split(sep)
@@ -32,7 +32,7 @@ def to_pythonic(data: dict) -> dict:
     flat_r = flatten(data)
     new_r = {}
     for k, v in flat_r.items():
-        new_k = k.replace('-', '_')
+        new_k = k.replace("-", "_")
         if isinstance(v, str):
             try:
                 v = int(v)
@@ -46,7 +46,9 @@ def to_pythonic(data: dict) -> dict:
     return data
 
 
-def convert_to_model(data: Optional[Union[dict, list]], model: Type[T]) -> Optional[Union[List[T], T]]:
+def convert_to_model(
+    data: Optional[Union[dict, list]], model: Type[T]
+) -> Optional[Union[List[T], T]]:
     if isinstance(data, dict):
         data = to_pythonic(data)
         return model(**data)

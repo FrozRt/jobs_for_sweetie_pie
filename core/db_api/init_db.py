@@ -27,8 +27,9 @@ class HHDatabaseInit(RawConnection):
             channel_id INTEGER PRIMARY KEY,
             technology_stack_id INTEGER,
             city_id INTEGER,
+            dev_grade ENUM('Junior', 'Middle', 'Senior'),
             salary VARCHAR(20),
-            active BOOLEAN DEFAULT FALSE,
+            active BOOLEAN DEFAULT TRUE,
             FOREIGN KEY (city_id) REFERENCES
             Cities(city_id) ON DELETE CASCADE,
             FOREIGN KEY (technology_stack_id) REFERENCES
@@ -99,6 +100,19 @@ class HHDatabaseInit(RawConnection):
         ]
         await HHVacancy._make_request(sql, params)
 
+    @staticmethod
+    async def fill_technology_stack_table():
+        sql = "INSERT INTO TechnologyStacks(technology_stack_id, title) VALUES (%s, %s)"
+        params = [
+            (1, "Python backend"),
+            (2, "Javascript Frontend"),
+            (3, "Go backend"),
+            (4, "Php backend"),
+            (5, "Java backend"),
+        ]
+        await HHVacancy._make_request(sql, params)
+
     async def expand_database(self):
         await self.create_tables()
         await self.fill_cities_table()
+        await self.fill_technology_stack_table()

@@ -1,15 +1,45 @@
 from aiogram import types
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import CommandStart
+from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ParseMode
-from aiogram.types.message import ContentType
-from aiogram.utils.markdown import bold, italic, text
+from aiogram.utils.markdown import bold, text
 
 from core.loader import dp
+
+
+class OrderVacancy(StatesGroup):
+    profession = State()
+    city = State()
+    salary = State()
 
 
 @dp.message_handler(CommandStart())
 async def bot_start(message: types.Message):
     await message.answer(f"Привет, {message.from_user.full_name}!")
+    await message.answer("Какую работу вы ищите?")
+    await OrderVacancy.profession.set()
+
+
+@dp.message_handler(state=OrderVacancy.profession)
+async def choose_job(message: types.Message, state: FSMContext):
+    await state.update_data(chosen_job=message.text)
+    await message.answer("В каком городе вы ищите работу?")
+    await OrderVacancy.city.set()
+
+
+@dp.message_handler(state=OrderVacancy.city)
+async def choose_city(message: types.Message, state: FSMContext):
+    await state.update_data(chosen_city=message.text)
+    await message.answer("Укажите ваши зарплатные ожидания.\nПример: 20000 - 30000")
+    await OrderVacancy.salary.set()
+
+
+@dp.message_handler(state=OrderVacancy.salary)
+async def choose_city(message: types.Message, state: FSMContext):
+    await state.update_data(chosen_salary=message.text)
+    vacansy_filter_data = await state.get_data()
+    print(2)
 
 
 @dp.message_handler(commands=["help"])
@@ -25,37 +55,3 @@ async def action_cancel(message: types.Message):
         "Действие отменено. Введите /start, чтобы начать заново.",
         reply_markup=remove_keyboard,
     )
-
-
-# @dp.message_handler(lambda message: message.text == "Parse")
-# async def whatsup_message(message: types.Message):
-#     await message.answer("Секунду")
-#     data = await parser.get_data()
-#     for vacancy in data:
-#         try:
-#             await message.answer(
-#                 f"{vacancy['link_title']}\n"
-#                 f"<b>{vacancy['salary']}</b>\r\n"
-#                 f"\r\n"
-#                 f"Организация: {vacancy['company_link_title']}\n"
-#                 f"{vacancy['company_location']}\r\n"
-#                 f"\r\n"
-#                 f"{vacancy['work_responsibilities']}\n"
-#                 f"\r\n"
-#                 f"{vacancy['work_requirements']}",
-#                 parse_mode="HTML",
-#             )
-#             await asyncio.sleep(0.1)
-#         except RetryAfter as e:
-#             await asyncio.sleep(e.timeout + 0.1)
-#
-
-
-@dp.message_handler(content_types=ContentType.ANY)
-async def unknown_message(msg: types.Message):
-    message_text = text(
-        italic("Я не знаю, что с этим делать \nЯ просто напомню, что есть"),
-        bold("команда:"),
-        "/help",
-    )
-    await msg.reply(message_text, parse_mode=ParseMode.MARKDOWN)

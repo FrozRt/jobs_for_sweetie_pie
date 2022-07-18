@@ -4,8 +4,8 @@ from typing import TypedDict
 import aiohttp
 
 import models
-from utils.db_api.connection import RawConnection
-from utils.db_api.vacancies import HHVacancy
+from core.db_api.connection import RawConnection
+from core.db_api.vacancies import HHVacancy
 
 
 class Region(TypedDict):
@@ -38,7 +38,9 @@ class HHArea(RawConnection):
     @staticmethod
     def get_task(region: Region):
         return asyncio.create_task(
-            HHArea.add_area_to_db(models.Area(area_id=region["id"], title=region["name"]))
+            HHArea.add_area_to_db(
+                models.Area(area_id=region["id"], title=region["name"].split("(")[0])
+            )
         )
 
     @staticmethod

@@ -1,6 +1,3 @@
-from utils.db_api.init_db import HHDatabaseInit
-
-
 async def on_startup(dp):
     import filters
     import middlewares
@@ -8,13 +5,11 @@ async def on_startup(dp):
     filters.setup(dp)
     middlewares.setup(dp)
 
-    from utils.db_api.areas import HHArea
+    from core.db_api.init_db import HHDatabaseInit
     from utils.notify_admins import on_startup_notify
 
     await on_startup_notify(dp)
-    await HHDatabaseInit().create_tables()
-    await HHArea.fill_area()
-    # await get_area_json()
+    await HHDatabaseInit().expand_database()
 
 
 if __name__ == "__main__":

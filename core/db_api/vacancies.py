@@ -1,7 +1,7 @@
 from aiogram import types
 
 import models
-from utils.db_api.connection import RawConnection
+from core.db_api.connection import RawConnection
 
 
 class HHVacancy(RawConnection):

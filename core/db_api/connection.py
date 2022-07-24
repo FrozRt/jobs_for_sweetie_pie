@@ -54,6 +54,7 @@ class RawConnection:
                             logger.error(e)
                             return r
                     else:
-                        return r
+                        for _ in r.values():
+                            return _
                 else:
                     await conn.commit()

@@ -1,13 +1,18 @@
-from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
 
 class Vacancy(BaseModel):
     vacancy_id: int
+    channel_id: int
     title: str
-    description: str
-    salary: float
+    description: Optional[str]
+    salary: Optional[str]
     company: str
-    uri: str
-    created_at: datetime
+
+
+class Channel(BaseModel):
+    channel_id: int
+    city_id: int
+    filter: str

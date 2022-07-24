@@ -1,17 +1,11 @@
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
-from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ParseMode
 from aiogram.utils.markdown import bold, text
 
 from core.loader import dp
 from handlers.channels.hh_vacancies_parser import parser
-
-
-class OrderVacancy(StatesGroup):
-    profession = State()
-    city = State()
-    salary = State()
+from handlers.channels.message import message_maker
 
 
 @dp.message_handler(CommandStart())
@@ -28,6 +22,11 @@ async def process_help_command(message: types.Message):
 @dp.message_handler(lambda message: message.text == "test")
 async def test_action(message: types.Message):
     await parser.get_channels()
+
+
+@dp.message_handler(lambda message: message.text == "mess")
+async def test_action(message: types.Message):
+    await message_maker.send_message()
 
 
 @dp.message_handler(lambda message: message.text == "Отмена")

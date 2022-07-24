@@ -1,3 +1,5 @@
+from typing import List
+
 import models
 from core.db_api.connection import RawConnection
 
@@ -23,6 +25,20 @@ class HHVacancy(RawConnection):
     async def get_channels() -> models.Channel:
         sql = "SELECT * FROM Channels"
         return await HHVacancy._make_request(sql, fetch=True, mult=True, model_type=models.Channel)
+
+    @staticmethod
+    async def get_new_vacancies() -> models.Vacancy:
+        sql = "SELECT * FROM Vacancies WHERE is_posted = 0"
+        return await HHVacancy._make_request(sql, fetch=True, mult=True, model_type=models.Vacancy)
+
+    @staticmethod
+    async def update_given_vacancies(params: List[tuple]) -> None:
+        sql = """UPDATE Vacancies
+        SET is_posted = 1
+        WHERE vacancy_id IN %s AND channel_id IN %s
+        """
+        params = ([v.vacancy_id for v in params], [v.channel_id for v in params])
+        await HHVacancy._make_request(sql, params, mult=True, model_type=models.Vacancy)
 
 
 database = HHVacancy()

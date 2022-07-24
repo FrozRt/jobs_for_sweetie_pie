@@ -32,8 +32,7 @@ class HHParser:
         }
 
     def run(self):
-        data = asyncio.run(self.get_channels())
-        return data
+        asyncio.run(self.get_channels())
 
     async def __get_response(self, session, channel):
         async with session.get(
@@ -82,7 +81,7 @@ class HHParser:
     def _get_or_none(tag: Tag):
         if tag is not None:
             return tag.text
-        return None
+        return ""
 
     @staticmethod
     def _fix_href_companies(tag: Tag):
@@ -106,7 +105,15 @@ class HHParser:
                 attrs={"data-qa": "vacancy-serp__vacancy_snippet_requirement"},
             )
         )
-        return f"{work_responsibilities} \n {work_requirements}"
+
+        if work_responsibilities and work_requirements:
+            return f"{work_responsibilities} \n\n{work_requirements}"
+        elif work_responsibilities and not work_requirements:
+            return f"{work_responsibilities}"
+        elif not work_responsibilities and work_requirements:
+            return f"{work_requirements}"
+        else:
+            return ""
 
 
 parser = HHParser()

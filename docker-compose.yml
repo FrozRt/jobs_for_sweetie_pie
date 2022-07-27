@@ -15,14 +15,14 @@ x-settings: &global
     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 services:
-  db:
-    container_name: mysql
-    image: mysql:5.7
-    ports:
-      - "3306:3306"
-    <<: *global
-    volumes:
-      - my-db:/var/lib/mysql
+#  db:
+#    container_name: mysql
+#    image: mysql:5.7
+#    ports:
+#      - "3306:3306"
+#    <<: *global
+#    volumes:
+#      - my-db:/var/lib/mysql
 
 #  bot:
 #    build:
@@ -35,15 +35,13 @@ services:
 #      - 6080:8000
 
 
-#  rabbitmq:
-#    container_name: spp_rabbitmq
-#    image: rabbitmq:latest
-#    ports:
-#      - 5672:5672
-#    environment:
-#      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-user}
-#      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-user}
-#    restart: always
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-tgbot}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-tgbot}
+    restart: always
 
 #  celery_worker:
 #    build:

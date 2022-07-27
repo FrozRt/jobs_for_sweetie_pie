@@ -6,18 +6,17 @@ from bs4 import BeautifulSoup, Tag
 import models
 from core.db_api.vacancies import database
 
-if __name__ == "__main__":
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) \
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) \
             AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 \
                                         Safari/537.36",
-        "accept": "*/*",
-    }
-    params = {
-        "text": "backend developer",
-        "area": 2,  # Поиск ощуществляется по вакансиям города Санкт-Петербург
-        "per_page": 10,  # Кол-во вакансий на 1 странице
-    }
+    "accept": "*/*",
+}
+params = {
+    "text": "backend developer",
+    "area": 2,  # Поиск ощуществляется по вакансиям города Санкт-Петербург
+    "per_page": 10,  # Кол-во вакансий на 1 странице
+}
 
 
 class HHParser:

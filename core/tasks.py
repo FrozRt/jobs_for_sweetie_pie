@@ -1,3 +1,4 @@
+import asyncio
 from time import sleep
 
 from celery import current_task
@@ -19,17 +20,25 @@ def test_data_celery(word: str) -> str:
 
 @celery_app.task(name="parser")
 def parse_vacancies_into_db():
-    parser.run()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(parser.get_channels())
     logger.success("Parser started...")
 
 
 @celery_app.task(name="sender")
 def send_vacancies_into_channels():
-    message_maker.run()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(message_maker.send_message())
     logger.success("Send messages in channels...")
 
 
 celery_app.conf.beat_schedule = {
-    "run_parser_worker": {"task": "parser", "schedule": crontab(minute="*/3")},
-    "run_message_maker": {"task": "sender", "schedule": crontab(minute="*/5")},
+    "run_parser_worker": {
+        "task": "parser",
+        "schedule": crontab(minute="*/3"),
+    },
+    "run_message_maker": {
+        "task": "sender",
+        "schedule": crontab(minute="*/5"),
+    },
 }

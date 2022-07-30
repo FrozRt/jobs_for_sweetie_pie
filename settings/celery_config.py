@@ -13,5 +13,4 @@ timezone = "UTC"
 task_track_started = True
 worker_hijack_root_logger = False
 worker_redirect_stdouts_level = "ERROR"
-result_expires = 60 * 60 * 24
 broker = os.getenv("CELERY_BROKER")

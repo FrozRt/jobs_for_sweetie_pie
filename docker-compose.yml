@@ -1,39 +1,39 @@
 version: "3.8"
 
-x-settings: &global
+x-settings:
+  &global
   environment:
     - CHANNEL=${CHANNEL}
     - TELEGRAM_API_TOKEN=${TELEGRAM_API_TOKEN}
     - ADMIN1=${ADMIN1}
     - ADMIN2=${ADMIN2}
     - CELERY_BROKER=${CELERY_BROKER}
-    - CELERY_HOUR_BEAT_INTERVAL=${CELERY_HOUR_BEAT_INTERVAL}
-    - CELERY_MINUTE_BEAT_INTERVAL=${CELERY_MINUTE_BEAT_INTERVAL}
     - MYSQL_DATABASE=${MY_DB}
     - MYSQL_USER=${MY_USER}
     - MYSQL_PASSWORD=${MY_PASSWORD}
     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 services:
-#  db:
-#    container_name: mysql
-#    image: mysql:5.7
-#    ports:
-#      - "3306:3306"
-#    <<: *global
-#    volumes:
-#      - my-db:/var/lib/mysql
+  db:
+    container_name: mysql
+    image: mysql/mysql-server:latest
+    ports:
+      - "3306:3306"
+    <<: *global
+    volumes:
+      - my-db:/var/lib/mysql
 
-#  bot:
-#    build:
-#      context: .
-#      dockerfile: bot.Dockerfile
-#    container_name: spp_base
-#    restart: always
-#    <<: *global
-#    ports:
-#      - 6080:8000
-
+  bot:
+    build:
+      context: .
+      dockerfile: bot.Dockerfile
+    container_name: tgbot
+    restart: always
+    <<: *global
+    ports:
+      - "6080:8000"
+    depends_on:
+      - db
 
   rabbitmq:
     container_name: rabbitmq
@@ -43,28 +43,34 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-tgbot}
     restart: always
 
-#  celery_worker:
-#    build:
-#      context: .
-#      dockerfile: bot.Dockerfile
-#    command: celery -A jobs_for_sweetie_pie worker -l info
-#    container_name: spp_celery-worker
-#    <<: *global
-#    depends_on:
-#      - bot
-#      - db
-#      - rabbitmq
-#    restart: always
-#
-#  celery-beat:
-#    build:
-#      context: .
-#      dockerfile: bot.Dockerfile
-#    container_name: spp-celery-beat
-#    <<: *global
-#    command: celery -A jobs_for_sweetie_pie beat -l info
-#    depends_on:
-#      - rabbitmq
+  celery_worker:
+    build:
+      context: .
+      dockerfile: celery.Dockerfile
+    container_name: worker
+    <<: *global
+    depends_on:
+      - rabbitmq
+      - db
+    restart: always
+    command: [ "worker" ]
+    volumes:
+      - .:/usr/src/app
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: celery.Dockerfile
+    container_name: beat
+    <<: *global
+    depends_on:
+      - rabbitmq
+      - celery_worker
+      - db
+    command: [ "beat" ]
+    volumes:
+      - .:/usr/src/app
+
 
 volumes:
   my-db:

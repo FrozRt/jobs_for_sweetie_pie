@@ -1,12 +1,25 @@
 FROM python:3.8-slim-buster
 
+WORKDIR /app
+COPY poetry.lock pyproject.toml /app/
+
+
+RUN apt-get update && pip install --upgrade pip poetry \
+    && poetry config virtualenvs.create false \
+    && poetry install --no-dev \
+    && rm -rf /root/.cache/pip
+
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add linux-headers g++ build-base libressl-dev libxslt-dev libgcrypt-dev musl-dev libffi-dev \
-libxml2 libxslt libc-dev
+RUN adduser --uid 1000 --home /app --disabled-password --gecos "" worker && \
+    chown -hR worker: /app
 
-RUN poetry install --no-dev --no-root
+COPY --chown=worker:worker . /app
+WORKDIR /app
 
-COPY . ./app
+ENV PYTHONPATH=/app
 
-CMD ["celery", "worker", "-A", "core.celery_app", "-l", "info"]
+RUN chmod +x ./worker-entrypoint.sh
+
+USER worker
+ENTRYPOINT ["./worker-entrypoint.sh"]

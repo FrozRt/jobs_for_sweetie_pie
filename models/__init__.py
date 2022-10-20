@@ -1,1 +1,1 @@
-from .vacancy import Vacancy
+from .vacancy import Channel, Vacancy

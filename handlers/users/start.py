@@ -1,34 +1,38 @@
 from aiogram import types
-from aiogram.types import ParseMode
-from aiogram.types.message import ContentType
-from aiogram.utils.markdown import text, bold, italic
 from aiogram.dispatcher.filters.builtin import CommandStart
+from aiogram.types import ParseMode
+from aiogram.utils.markdown import bold, text
 
 from core.loader import dp
+from handlers.channels.hh_vacancies_parser import parser
+from handlers.channels.message import message_maker
 
 
 @dp.message_handler(CommandStart())
 async def bot_start(message: types.Message):
-    await message.answer(f'Привет, {message.from_user.full_name}!')
+    await message.answer(f"Привет, {message.from_user.full_name}!")
 
 
-@dp.message_handler(commands=['help'])
+@dp.message_handler(commands=["help"])
 async def process_help_command(message: types.Message):
-    msg = text(bold('Я могу ответить на следующие команды:'),
-               '/help', '/start', sep='\n')
+    msg = text(bold("Я могу ответить на следующие команды:"), "/help", "/start", sep="\n")
     await message.reply(msg, parse_mode=ParseMode.MARKDOWN)
+
+
+@dp.message_handler(lambda message: message.text == "test")
+async def test_action(message: types.Message):
+    await parser.get_channels()
+
+
+@dp.message_handler(lambda message: message.text == "mess")
+async def test_action(message: types.Message):
+    await message_maker.send_message()
 
 
 @dp.message_handler(lambda message: message.text == "Отмена")
 async def action_cancel(message: types.Message):
     remove_keyboard = types.ReplyKeyboardRemove()
-    await message.answer("Действие отменено. Введите /start, чтобы начать заново.",
-                         reply_markup=remove_keyboard)
-
-
-@dp.message_handler(content_types=ContentType.ANY)
-async def unknown_message(msg: types.Message):
-    message_text = text(italic('Я не знаю, что с этим делать \nЯ просто напомню, что есть'),
-                        bold('команда:'), '/help')
-    await msg.reply(message_text, parse_mode=ParseMode.MARKDOWN)
-
+    await message.answer(
+        "Действие отменено. Введите /start, чтобы начать заново.",
+        reply_markup=remove_keyboard,
+    )

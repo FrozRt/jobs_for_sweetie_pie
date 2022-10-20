@@ -5,6 +5,7 @@ import aiomysql
 from loguru import logger
 
 from settings.config import settings
+
 from . import misc
 
 T = TypeVar("T")
@@ -15,15 +16,17 @@ class RawConnection:
 
     @staticmethod
     async def _make_request(
-            sql: str,
-            params: Union[tuple, List[tuple]] = None,
-            fetch: bool = False,
-            mult: bool = False,
-            retries_count: int = 5,
-            model_type: Type[T] = None
+        sql: str,
+        params: Union[tuple, List[tuple]] = None,
+        fetch: bool = False,
+        mult: bool = False,
+        retries_count: int = 5,
+        model_type: Type[T] = None,
     ) -> Optional[Union[List[T], T]]:
         if RawConnection.connection_pool is None:
-            RawConnection.connection_pool = await aiomysql.create_pool(**settings.get_db_connection_data())
+            RawConnection.connection_pool = await aiomysql.create_pool(
+                **settings.get_db_connection_data()
+            )
         async with RawConnection.connection_pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor(aiomysql.DictCursor) as cur:
@@ -35,7 +38,7 @@ class RawConnection:
                         else:
                             await cur.execute(sql, params)
                     except (aiomysql.OperationalError, aiomysql.InternalError) as e:
-                        if 'Deadlock found' in str(e):
+                        if "Deadlock found" in str(e):
                             await asyncio.sleep(1)
                     else:
                         break
@@ -51,6 +54,7 @@ class RawConnection:
                             logger.error(e)
                             return r
                     else:
-                        return r
+                        for _ in r.values():
+                            return _
                 else:
                     await conn.commit()
